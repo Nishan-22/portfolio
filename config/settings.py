@@ -118,6 +118,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 import os
+from dotenv import load_dotenv
+
+# Load .env variables
+load_dotenv()
 
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
@@ -129,5 +133,5 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = "nishan.official22@gmail.com"
-EMAIL_HOST_PASSWORD = "ghdm zzqj asss myhn" 
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
