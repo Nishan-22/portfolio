@@ -23,4 +23,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
+    path('blockchain/', views.blockchain, name='blockchain'),
+    path('terminal/', views.terminal_view, name='terminal'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

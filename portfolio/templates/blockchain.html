@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ profile.name }} | Blockchain Expert</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="bg-[#0a0a0f] text-gray-200">
+
+<!-- NAV -->
+<nav class="border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+        <h1 class="text-xl font-bold tracking-widest">
+            {{ profile.name }}
+        </h1>
+
+        <div class="flex gap-8 text-sm uppercase tracking-wider">
+            <a href="/" class="hover:text-blue-500">Portfolio</a>
+            <a href="/blockchain/" class="text-blue-500">Blockchain</a>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="py-32 text-center">
+    <p class="text-blue-500 uppercase tracking-[0.3em] text-xs mb-4">
+        Blockchain Expert
+    </p>
+
+    <h2 class="text-5xl md:text-7xl font-bold mb-6">
+        Web3 • Smart Contracts • DeFi
+    </h2>
+
+    <p class="max-w-2xl mx-auto text-gray-400">
+        {{ profile.bio }}
+    </p>
+</section>
+
+<!-- SKILLS -->
+<section class="py-24 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-6">
+        <h3 class="text-3xl font-bold mb-12">Core Skills</h3>
+
+        <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-10">
+            {% for skill in skills %}
+            <div class="border border-white/10 p-6 rounded-lg hover:border-blue-500 transition">
+                <i class="fa-brands fa-{{ skill.icon_name }} text-blue-500 text-3xl mb-4"></i>
+                <h4 class="font-semibold">{{ skill.name }}</h4>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="py-24">
+    <div class="max-w-7xl mx-auto px-6">
+        <h3 class="text-3xl font-bold mb-12">Blockchain Projects</h3>
+
+        <div class="grid md:grid-cols-2 gap-12">
+            {% for project in projects %}
+            <div class="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+                {% if project.image %}
+                <img src="{{ project.image.url }}" class="w-full h-56 object-cover">
+                {% endif %}
+
+                <div class="p-6">
+                    <p class="text-xs uppercase tracking-widest text-blue-500 mb-2">
+                        {{ project.category }}
+                    </p>
+                    <h4 class="text-xl font-bold mb-4">
+                        {{ project.title }}
+                    </h4>
+
+                    {% if project.link %}
+                    <a href="{{ project.link }}" target="_blank"
+                       class="text-sm text-blue-400 hover:underline">
+                        View Project →
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/10 py-10 text-center text-sm text-gray-500">
+    © {{ profile.name }} · Blockchain Portfolio
+</footer>
+
+</body>
+</html>

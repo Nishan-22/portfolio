@@ -49,6 +49,13 @@
                 <a href="#services" class="hover:text-blue-500 transition">Services</a>
                 <a href="#projects" class="hover:text-blue-500 transition">Portfolio</a>
                 <a href="#contact" class="hover:text-blue-500 transition">Contact</a>
+
+                <a href="{% url 'terminal' %}"
+   class="hover:text-blue-500 transition flex items-center gap-2">
+    <i class="fa-solid fa-terminal"></i>
+    web3 View
+</a>
+
             </div>
 
             <button @click="dark = !dark; localStorage.setItem('darkMode', dark)"
@@ -119,6 +126,57 @@
         </div>
     </div>
 </section>
+
+<!-- CERTIFICATES -->
+<section id="certificates" class="py-32 border-t border-slate-200 dark:border-white/5">
+    <div class="max-w-7xl mx-auto px-6">
+
+        <p class="text-blue-500 uppercase tracking-widest text-xs font-bold mb-2">
+            Credentials
+        </p>
+
+        <h2 class="heading-font text-5xl font-bold uppercase mb-16">
+            Certifications
+        </h2>
+
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-10">
+
+            {% for cert in certificates %}
+            <div
+                class="group bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10
+                       rounded-xl overflow-hidden hover:shadow-xl transition">
+
+                <!-- IMAGE -->
+                {% if cert.image %}
+                <div class="overflow-hidden">
+                    <img src="{{ cert.image.url }}"
+                         class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">
+                </div>
+                {% endif %}
+
+                <!-- CONTENT -->
+                <div class="p-6">
+                    <p class="text-blue-600 text-[10px] uppercase tracking-widest mb-2">
+                        {{ cert.issuer }}
+                    </p>
+
+                    <h3 class="heading-font uppercase font-bold text-lg mb-3">
+                        {{ cert.title }}
+                    </h3>
+
+                    {% if cert.description %}
+                    <p class="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
+                        {{ cert.description }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
 
 <!-- PROJECTS -->
 <section id="projects" class="py-32">
@@ -256,9 +314,7 @@
         <p class="text-sm text-slate-600 dark:text-gray-400 mb-2">
             © 2026 {{ profile.name }}. All rights reserved.
         </p>
-        <p class="text-xs text-slate-500 dark:text-gray-500 tracking-widest uppercase">
-            Built with Django & Tailwind CSS
-        </p>
+        
     </div>
 </footer>
 

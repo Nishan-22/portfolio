@@ -36,3 +36,16 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Certificate(models.Model):
+    title = models.CharField(max_length=200)
+    issuer = models.CharField(max_length=200, blank=True)
+    description = models.TextField(blank=True)
+    image = models.ImageField(upload_to="certificates/")
+    link = models.URLField(blank=True)
+    issued_date = models.DateField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
