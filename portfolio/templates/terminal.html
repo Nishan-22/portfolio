@@ -154,19 +154,20 @@
             <div class="w-10 h-10 bg-cyan-500 text-black flex items-center justify-center font-bold">0x</div>
             <div>
                 <span class="text-xl font-bold text-white tracking-widest">{{ profile.name|upper }}</span>
-                <span class="block text-[8px] text-cyan-600 font-bold tracking-tighter uppercase">Operator_v6.0</span>
+                <span class="block text-[8px] text-cyan-600 font-bold tracking-tighter uppercase">Operator_v7.0</span>
             </div>
         </div>
         <div class="flex items-center gap-10">
+    <div class="flex items-center gap-10">
     <div class="hidden md:flex gap-10 text-[10px] font-bold uppercase tracking-[0.2em]">
         <a href="{% url 'home' %}" class="border border-cyan-500/50 px-3 py-1 text-cyan-500 hover:bg-cyan-500 hover:text-black transition-all">
             [ SWITCH_VIEW: HOME ]
         </a>
         
-        <!-- <a href="{% url 'blockchain' %}" class="hover:text-cyan-400">/Blockchain</a> -->
+        <a href="#projects" class="hover:text-cyan-400 transition-all">/Projects</a>
+        <a href="#archive" class="hover:text-cyan-400 transition-all">/Archive</a>
+        <a href="#capabilities" class="hover:text-cyan-400 transition-all">/Stack</a>
         
-        <a href="#projects" class="hover:text-cyan-400">/Projects</a>
-        <a href="#capabilities" class="hover:text-cyan-400">/Stack</a>
         <a href="#contact" class="bg-white text-black px-6 py-2 hover:bg-cyan-500 transition-all">/Contact</a>
     </div>
 </div>
@@ -182,6 +183,7 @@
                 <img src="{{ profile.profile_image.url }}" class="w-72 h-72 object-cover relative z-10 brightness-110" alt="Identity">
                 <div class="absolute bottom-0 left-0 bg-cyan-500 text-black px-2 py-1 text-[9px] font-bold z-20">ACTIVE_NODE</div>
             </div>
+            
             <div class="flex-1 space-y-6">
                 <h1 class="text-7xl lg:text-9xl font-bold text-white tracking-tighter leading-none">{{ profile.name }}</h1>
                 <p class="text-amber-500 text-lg font-bold tracking-[0.5em] uppercase">&gt; {{ profile.tagline }}</p>
@@ -189,8 +191,37 @@
                 <p class="max-w-xl text-xl text-slate-400 font-light leading-relaxed">{{ profile.bio }}</p>
             </div>
         </header>
+        <section id="archive" class="space-y-16">
+            <div class="flex items-center gap-6">
+                <h2 class="text-xs font-bold text-white tracking-[1em] uppercase border-l-4 border-cyan-500 pl-4">Authenticated_Archive</h2>
+                <div class="h-px flex-1 bg-cyan-500/10"></div>
+            </div>
+            
+       
+        <div class="grid md:grid-cols-2 gap-8">
+                {% for cert in certificates %}
+                <div class="elite-card p-8 flex gap-8 items-center group">
+                    <div class="relative shrink-0">
+                        {% if cert.image %}
+                        <img src="{{ cert.image.url }}" class="w-20 h-20 object-contain rounded opacity-40 group-hover:opacity-100 transition-opacity duration-500" alt="Seal">
+                        {% endif %}
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent h-1 w-full scale-y-0 group-hover:scale-y-100 group-hover:animate-pulse transition-transform"></div>
+                    </div>
+                    <div>
+                        <div class="text-[9px] text-amber-500 font-mono mb-2 tracking-[0.3em] uppercase opacity-70">
+                            &gt; Verification_Status: Valid
+                        </div>
+                        <h3 class="text-xl text-white font-bold uppercase tracking-tighter group-hover:text-cyan-400 transition-colors">
+                            {{ cert.title }}
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">{{ cert.issuer }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+             </section> 
 
-        <section id="projects" class="space-y-16">
+        <section id="projects" class="space-y-16">s
             <h2 class="text-xs font-bold text-white tracking-[1em] uppercase border-l-4 border-cyan-500 pl-4">Live_Deployments</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                 {% for project in projects %}
