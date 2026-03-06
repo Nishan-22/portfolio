@@ -3,329 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ profile.name }} | ELITE_VALIDATOR</title>
+    <title>{{ profile.name }} | TERMINAL_V2</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         :root { 
             --primary: #00f2ff; 
-            --accent: #f59e0b;
-            --bg-dark: #010204; 
+            --bg-dark: #050505; 
+            --card-bg: #0a0a0a;
+            --border: rgba(0, 242, 255, 0.2);
         }
         
-        html { scroll-behavior: smooth; }
         body { 
             font-family: 'JetBrains Mono', monospace; 
             background-color: var(--bg-dark); 
-            color: #94a3b8; 
-            overflow-x: hidden;
+            color: #d1d5db; 
+            line-height: 1.6;
         }
 
-        /* --- THE GRID ENGINE --- */
-        .grid-master {
+        /* Subtle background grid */
+        .bg-grid {
             position: fixed; inset: 0; z-index: -1;
-            background-image: 
-                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
+            background-image: radial-gradient(circle, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
-        /* --- SIDEBAR MONITOR (LEFT) --- */
-        .side-monitor {
-            position: fixed; left: 0; top: 0; bottom: 0; width: 60px;
-            border-right: 1px solid rgba(0, 242, 255, 0.1);
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; gap: 40px; z-index: 100;
-            background: rgba(1, 2, 4, 0.8);
-            backdrop-filter: blur(10px);
+        /* Clean Terminal Cards */
+        .term-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
         }
-        .side-label { transform: rotate(-90deg); font-size: 10px; white-space: nowrap; letter-spacing: 0.5em; color: var(--primary); opacity: 0.5; }
-
-        /* --- NAV ELITE --- */
-        .nav-elite {
-            background: rgba(1, 2, 4, 0.95);
-            border-bottom: 1px solid var(--primary);
+        
+        .term-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
         }
 
-        /* --- INDUSTRIAL CARDS --- */
-        .elite-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.03) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .term-header {
+            background: rgba(0, 242, 255, 0.1);
+            border-bottom: 1px solid var(--border);
+            padding: 8px 16px;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Navigation */
+        .nav-link {
             position: relative;
-            transition: all 0.3s;
+            padding: 5px 10px;
+            transition: 0.3s;
         }
-        .elite-card::before {
-            content: ""; position: absolute; top: -1px; left: -1px; width: 10px; height: 10px;
-            border-top: 2px solid var(--primary); border-left: 2px solid var(--primary);
+        .nav-link:hover { color: var(--primary); }
+        .nav-link:hover::after {
+            content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: var(--primary);
         }
-        .elite-card:hover { border-color: var(--primary); background: rgba(0, 242, 255, 0.02); }
 
-        /* --- TICKER --- */
-        .ticker-wrap {
-            position: fixed; bottom: 0; width: 100%; height: 30px;
-            background: rgba(0, 242, 255, 0.05);
-            border-top: 1px solid rgba(0, 242, 255, 0.1);
-            display: flex; align-items: center; z-index: 200; overflow: hidden;
+        /* Typography improvements */
+        .heading-glow {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
         }
-        .ticker-move { display: flex; animation: ticker 30s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* --- HOME BUTTON --- */
-        .btn-home {
-            position: fixed; bottom: 4rem; right: 2rem;
-            background: var(--primary); color: #000;
-            padding: 10px 20px; font-weight: bold; font-size: 10px;
-            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0% 30%);
-            z-index: 150; transition: 0.3s;
-        }
-        .btn-home:hover { background: #fff; transform: translateY(-5px); }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
         #boot { background: #000; z-index: 9999; }
+        
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--primary);
+            margin-left: 5px;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { from, to { opacity: 1; } 50% { opacity: 0; } }
 
-
-
-        /* Blinking cursor effect */
-.cursor {
-    display: inline-block;
-    width: 8px;
-    height: 15px;
-    background: var(--primary);
-    margin-left: 4px;
-    animation: blink 0.8s infinite;
-    vertical-align: middle;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-.typing-cursor {
-    display: inline-block;
-    width: 10px;
-    height: 1.2em;
-    background: var(--primary);
-    margin-left: 5px;
-    animation: blink 0.8s step-end infinite;
-    vertical-align: middle;
-}
-
-@keyframes blink {
-    from, to { opacity: 1; }
-    50% { opacity: 0; }
-}
+        .btn-action {
+            border: 1px solid var(--primary);
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+        .btn-action:hover {
+            background: var(--primary);
+            color: #000;
+        }
     </style>
 </head>
-<body id="top">
+<body class="selection:bg-cyan-500 selection:text-black">
 
-    <div class="grid-master"></div>
+    <div class="bg-grid"></div>
 
-    <div id="boot" class="fixed inset-0 flex items-center justify-center">
-        <div class="w-full max-w-4xl font-mono text-cyan-500 p-10">
-            <div id="boot-log" class="text-sm leading-tight"></div>
+    <!-- SIMPLE BOOT -->
+    <div id="boot" class="fixed inset-0 flex items-center justify-center p-8">
+        <div class="w-full max-w-xl font-mono text-cyan-500">
+            <div id="boot-log" class="text-lg leading-relaxed"></div>
         </div>
     </div>
 
-    <div class="ticker-wrap mono text-[9px] text-cyan-500 uppercase font-bold">
-        <div class="ticker-move">
-            <span class="px-8">TX: 0x8a2f...e41 (CONFIRMED)</span>
-            <span class="px-8">BLOCK: 19824102 (SYNCED)</span>
-            <span class="px-8">PEERS: 42 (OPTIMAL)</span>
-            <span class="px-8">LATENCY: 12ms</span>
-            <span class="px-8">GAS: 18 GWEI</span>
-            <span class="px-8">TX: 0x8a2f...e41 (CONFIRMED)</span>
-            <span class="px-8">BLOCK: 19824102 (SYNCED)</span>
-            <span class="px-8">PEERS: 42 (OPTIMAL)</span>
-            <span class="px-8">LATENCY: 12ms</span>
-            <span class="px-8">GAS: 18 GWEI</span>
-        </div>
-    </div>
-
-    <div class="side-monitor hidden xl:flex">
-        <div class="side-label">NETWORK_READY</div>
-        <div class="side-label">0x_NODE_v6.0</div>
-    </div>
-
-    <nav class="fixed top-0 inset-x-0 h-24 nav-elite z-[150] px-12 flex items-center justify-between">
-
-        
-        <div class="flex items-center gap-4 group cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <div class="w-10 h-10 bg-cyan-500 text-black flex items-center justify-center font-bold">0x</div>
-            <div>
-                <span class="text-xl font-bold text-white tracking-widest">{{ profile.name|upper }}</span>
-                <span class="block text-[8px] text-cyan-600 font-bold tracking-tighter uppercase">Operator_v7.0</span>
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 w-full z-[100] border-b border-white/5 bg-black/80 backdrop-blur-md px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-cyan-500 font-bold text-xl tracking-tighter">[SYS.{{ profile.name|slice:":3"|upper }}]</span>
+            </div>
+            <div class="flex items-center gap-8 text-sm font-medium uppercase tracking-widest">
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="#skills" class="nav-link">Stack</a>
+                <a href="{% url 'home' %}" class="text-white border border-white/20 px-4 py-2 hover:bg-white hover:text-black transition-all">
+                    Exit
+                </a>
             </div>
         </div>
-        <div class="flex items-center gap-10">
-    <div class="flex items-center gap-10">
-    <div class="hidden md:flex gap-10 text-[10px] font-bold uppercase tracking-[0.2em]">
-        <a href="{% url 'home' %}" class="border border-cyan-500/50 px-3 py-1 text-cyan-500 hover:bg-cyan-500 hover:text-black transition-all">
-            [ SWITCH_VIEW: HOME ]
-        </a>
-        
-        <a href="#projects" class="hover:text-cyan-400 transition-all">/Projects</a>
-        <a href="#archive" class="hover:text-cyan-400 transition-all">/Archive</a>
-        <a href="#capabilities" class="hover:text-cyan-400 transition-all">/Stack</a>
-        
-        <a href="#contact" class="bg-white text-black px-6 py-2 hover:bg-cyan-500 transition-all">/Contact</a>
-    </div>
-</div>
     </nav>
 
-    <a href="#top" class="btn-home uppercase tracking-widest">&gt; RESET_HOME</a>
-
-    <main class="pl-20 pr-12 lg:pr-32 pt-52 pb-40 space-y-72">
-
-        <header class="flex flex-col md:flex-row items-center gap-20">
-            <div class="relative">
-                <div class="absolute -inset-2 border-2 border-cyan-500/20"></div>
-                <img src="{{ profile.profile_image.url }}" class="w-72 h-72 object-cover relative z-10 brightness-110" alt="Identity">
-                <div class="absolute bottom-0 left-0 bg-cyan-500 text-black px-2 py-1 text-[9px] font-bold z-20">ACTIVE_NODE</div>
-            </div>
-            
-            <div class="flex-1 space-y-6">
-                <h1 class="text-7xl lg:text-9xl font-bold text-white tracking-tighter leading-none">{{ profile.name }}</h1>
-                <p class="text-amber-500 text-lg font-bold tracking-[0.5em] uppercase">&gt; {{ profile.tagline }}</p>
-                <div class="h-px w-32 bg-cyan-500"></div>
-                <p class="max-w-xl text-xl text-slate-400 font-light leading-relaxed">{{ profile.bio }}</p>
+    <main class="max-w-6xl mx-auto px-6 pt-32 pb-20">
+        
+        <!-- HERO -->
+        <header class="py-20 mb-20">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="w-48 h-48 border-2 border-cyan-500 p-2 shrink-0">
+                    <img src="{{ profile.profile_image.url }}" class="w-full h-full object-cover grayscale" alt="User">
+                </div>
+                <div class="space-y-6">
+                    <div class="text-cyan-500 text-sm font-bold tracking-[0.4em] uppercase">Authenticated_Identity</div>
+                    <h1 class="text-5xl md:text-7xl font-bold text-white heading-glow uppercase tracking-tighter">
+                        {{ profile.name }}
+                    </h1>
+                    <p class="text-xl text-gray-400 max-w-2xl font-light">
+                        {{ profile.bio }}
+                    </p>
+                </div>
             </div>
         </header>
-        <section id="archive" class="space-y-16">
-            <div class="flex items-center gap-6">
-                <h2 class="text-xs font-bold text-white tracking-[1em] uppercase border-l-4 border-cyan-500 pl-4">Authenticated_Archive</h2>
-                <div class="h-px flex-1 bg-cyan-500/10"></div>
-            </div>
-            
-       
-        <div class="grid md:grid-cols-2 gap-8">
-                {% for cert in certificates %}
-                <div class="elite-card p-8 flex gap-8 items-center group">
-                    <div class="relative shrink-0">
-                        {% if cert.image %}
-                        <img src="{{ cert.image.url }}" class="w-20 h-20 object-contain rounded opacity-40 group-hover:opacity-100 transition-opacity duration-500" alt="Seal">
-                        {% endif %}
-                        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent h-1 w-full scale-y-0 group-hover:scale-y-100 group-hover:animate-pulse transition-transform"></div>
-                    </div>
-                    <div>
-                        <div class="text-[9px] text-amber-500 font-mono mb-2 tracking-[0.3em] uppercase opacity-70">
-                            &gt; Verification_Status: Valid
-                        </div>
-                        <h3 class="text-xl text-white font-bold uppercase tracking-tighter group-hover:text-cyan-400 transition-colors">
-                            {{ cert.title }}
-                        </h3>
-                        <p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">{{ cert.issuer }}</p>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-             </section> 
 
-        <section id="projects" class="space-y-16">s
-            <h2 class="text-xs font-bold text-white tracking-[1em] uppercase border-l-4 border-cyan-500 pl-4">Live_Deployments</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <!-- PROJECTS -->
+        <section id="projects" class="mb-32">
+            <div class="flex items-center gap-4 mb-12">
+                <h2 class="text-2xl font-bold text-white uppercase tracking-wider">Active_Deployments</h2>
+                <div class="h-[1px] flex-1 bg-white/10"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {% for project in projects %}
-                <div class="elite-card group">
-                    <div class="aspect-video bg-zinc-900 overflow-hidden">
-                        <img src="{{ project.image.url }}" class="w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110">
+                <div class="term-card overflow-hidden">
+                    <div class="term-header">
+                        <span>PROJECT_{{ forloop.counter }}</span>
+                        <span class="text-[9px] opacity-60">ID: {{ project.id|default:"00x" }}</span>
                     </div>
                     <div class="p-8 space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-2xl font-bold text-white uppercase">{{ project.title }}</h3>
-                            <span class="text-[9px] text-cyan-500 mono border border-cyan-500/20 px-2 py-1 uppercase">Block_Verified</span>
+                        <h3 class="text-2xl font-bold text-white uppercase tracking-tight group-hover:text-cyan-500 transition-colors">
+                            {{ project.title }}
+                        </h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            {{ project.description }}
+                        </p>
+                        <div class="flex flex-wrap gap-2 pt-2">
+                            <span class="text-[10px] px-2 py-1 bg-white/5 border border-white/10 text-gray-400 uppercase">{{ project.category }}</span>
                         </div>
-                        <p class="text-sm text-slate-500">{{ project.description }}</p>
-                        <a href="{{ project.link }}" target="_blank" class="inline-block text-[10px] font-bold text-white border-b-2 border-cyan-500 hover:text-cyan-500 uppercase pt-4 transition-colors">Execute_Contract</a>
+                        <div class="pt-6">
+                            <a href="{{ project.link }}" target="_blank" class="btn-action w-full inline-block text-center">
+                                View Deployment
+                            </a>
+                        </div>
                     </div>
                 </div>
-                {% endfor %}
-            </div>
-        </section>
-
-        <section id="capabilities" class="space-y-12">
-            <h2 class="text-xs font-bold text-white tracking-[1em] uppercase border-l-4 border-cyan-500 pl-4">System_Specs</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {% for skill in skills %}
-                <div class="elite-card p-10 group">
-                    <span class="text-[8px] text-cyan-500/50 mb-2 block font-bold tracking-widest uppercase">Layer_{{ forloop.counter }}</span>
-                    <span class="text-white text-sm font-bold uppercase tracking-widest group-hover:text-cyan-400">{{ skill.name }}</span>
+                {% empty %}
+                <div class="col-span-2 py-20 text-center border border-dashed border-white/10">
+                    <p class="text-gray-500 uppercase tracking-widest text-sm">No_Active_Nodes_Found</p>
                 </div>
                 {% endfor %}
             </div>
         </section>
 
-        <section id="contact" class="max-w-4xl pb-20">
-            <div class="elite-card p-12 lg:p-20 space-y-12 border-l-4 border-l-cyan-500">
-                <h2 class="text-4xl text-white font-bold tracking-tighter uppercase">Initialize_Channel</h2>
-                <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {% csrf_token %}
-                    <input type="text" name="name" placeholder="ID: OPERATOR_NAME" required class="bg-white/5 border-b border-white/20 p-4 outline-none focus:border-cyan-500 text-white text-sm font-bold uppercase">
-                    <input type="email" name="email" placeholder="ADDR: OPTIONAL_EMAIL" class="bg-white/5 border-b border-white/20 p-4 outline-none focus:border-cyan-500 text-white text-sm font-bold uppercase">
-                    
-                    <textarea name="message" placeholder="DATA: MESSAGE_PAYLOAD" rows="4" required class="col-span-1 md:col-span-2 bg-white/5 border-b border-white/20 p-4 outline-none focus:border-cyan-500 text-white text-sm font-bold uppercase"></textarea>
-                    <button type="submit" class="col-span-1 md:col-span-2 py-6 bg-cyan-500 text-black font-bold uppercase tracking-[0.5em] hover:bg-white transition-all text-xs">Broadcast_Request</button>
-                </form>
+        <!-- SKILLS -->
+        <section id="skills" class="mb-32">
+            <div class="flex items-center gap-4 mb-12">
+                <h2 class="text-2xl font-bold text-white uppercase tracking-wider">System_Capabilities</h2>
+                <div class="h-[1px] flex-1 bg-white/10"></div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {% for skill in skills %}
+                <div class="term-card p-6 text-center space-y-3">
+                    <div class="text-2xl text-cyan-500">
+                        <i class="fa-brands fa-{{ skill.icon_name|default:'codepen' }}"></i>
+                    </div>
+                    <div class="text-[11px] font-bold text-white uppercase tracking-widest">{{ skill.name }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact" class="max-w-3xl mx-auto">
+            <div class="term-card">
+                <div class="term-header">
+                    <span>SECURE_CHANNEL_INIT</span>
+                    <span>AES_256_ENCRYPTED</span>
+                </div>
+                <div class="p-8 md:p-12">
+                    <form method="POST" class="space-y-6">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Operator_Name</label>
+                                <input type="text" name="name" required class="w-full bg-black border border-white/10 p-3 outline-none focus:border-cyan-500 text-white transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Return_Address</label>
+                                <input type="email" name="email" class="w-full bg-black border border-white/10 p-3 outline-none focus:border-cyan-500 text-white transition-all">
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Message_Payload</label>
+                            <textarea name="message" rows="5" required class="w-full bg-black border border-white/10 p-3 outline-none focus:border-cyan-500 text-white transition-all"></textarea>
+                        </div>
+                        <button type="submit" class="btn-action w-full">
+                            Execute_Broadcast
+                        </button>
+                    </form>
+                </div>
             </div>
         </section>
 
     </main>
 
+    <!-- FOOTER -->
+    <footer class="py-10 border-t border-white/5 text-center">
+        <p class="text-[10px] text-gray-600 uppercase tracking-[0.5em]">
+            &copy; 2024 {{ profile.name }} // End_of_Line.
+        </p>
+    </footer>
+
     <script>
-    const lines = [
-        "> INITIALIZING_ELITE_KERNEL...",
-        "> LOADING_IDENTITY: {{ profile.name }}",
-        "> SYNCING_BLOCKCHAIN_STATE...",
-        "> HANDSHAKE_ESTABLISHED.",
-        "> [SYSTEM_READY]"
-    ];
+        const lines = [
+            "> AUTHENTICATING...",
+            "> CONNECTION_STABLE",
+            "> IDENTITY_VERIFIED: {{ profile.name|upper }}",
+            "> WELCOME_OPERATOR."
+        ];
 
-    const logEl = document.getElementById('boot-log');
-    let lineIdx = 0;
-    let charIdx = 0;
+        const logEl = document.getElementById('boot-log');
+        let lineIdx = 0;
+        let charIdx = 0;
 
-    function typeEffect() {
-        // Create the line element if it's the start of a new line
-        if (charIdx === 0) {
-            const newLine = document.createElement('div');
-            newLine.className = "mb-1 uppercase font-bold text-cyan-500";
-            newLine.id = "line-" + lineIdx;
-            logEl.appendChild(newLine);
-        }
+        function typeEffect() {
+            if (charIdx === 0) {
+                const newLine = document.createElement('div');
+                newLine.className = "mb-2 font-bold flex items-center gap-2";
+                newLine.id = "line-" + lineIdx;
+                logEl.appendChild(newLine);
+            }
 
-        const currentLineEl = document.getElementById("line-" + lineIdx);
-        const fullText = lines[lineIdx];
+            const currentLineEl = document.getElementById("line-" + lineIdx);
+            const fullText = lines[lineIdx];
 
-        // Type the character
-        currentLineEl.textContent = fullText.substring(0, charIdx + 1);
-        charIdx++;
+            currentLineEl.textContent = fullText.substring(0, charIdx + 1);
+            charIdx++;
 
-        if (charIdx < fullText.length) {
-            // Speed of typing each character (Lower = Faster)
-            setTimeout(typeEffect, 30); 
-        } else {
-            // Line is finished
-            lineIdx++;
-            charIdx = 0;
-            if (lineIdx < lines.length) {
-                // Delay before starting the next line
-                setTimeout(typeEffect, 500); 
+            if (charIdx < fullText.length) {
+                setTimeout(typeEffect, 30); 
             } else {
-                // All lines finished - Add final cursor and fade out
-                const cursor = document.createElement('span');
-                cursor.className = "cursor";
-                currentLineEl.appendChild(cursor);
+                lineIdx++;
+                charIdx = 0;
+                if (lineIdx < lines.length) {
+                    setTimeout(typeEffect, 400); 
+                } else {
+                    const cursor = document.createElement('span');
+                    cursor.className = "cursor";
+                    currentLineEl.appendChild(cursor);
 
-                setTimeout(() => {
-                    const boot = document.getElementById('boot');
-                    boot.style.transition = "opacity 1.5s ease";
-                    boot.style.opacity = '0';
-                    setTimeout(() => boot.remove(), 1000);
-                }, 2000); // How long the finished text stays visible   
+                    setTimeout(() => {
+                        const boot = document.getElementById('boot');
+                        boot.style.transition = "opacity 0.8s ease";
+                        boot.style.opacity = '0';
+                        setTimeout(() => boot.remove(), 800);
+                    }, 1200); 
+                }
             }
         }
-    }
 
-    window.onload = typeEffect;
-</script>
+        window.onload = typeEffect;
+    </script>
 </body>
 </html>

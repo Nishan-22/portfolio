@@ -11,8 +11,8 @@ class SkillAdmin(admin.ModelAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'is_featured', 'created_at')
-    list_filter = ('is_featured', 'category')
+    list_display = ('title', 'category', 'is_featured', 'is_blockchain', 'created_at')
+    list_filter = ('is_featured', 'is_blockchain', 'category')
 
 @admin.register(Certificate)
 class CertificateAdmin(admin.ModelAdmin):

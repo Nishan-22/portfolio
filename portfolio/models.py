@@ -32,6 +32,7 @@ class Project(models.Model):
     image = models.ImageField(upload_to='projects/', blank=True)
     link = models.URLField(blank=True)
     is_featured = models.BooleanField(default=False)
+    is_blockchain = models.BooleanField(default=False)
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):

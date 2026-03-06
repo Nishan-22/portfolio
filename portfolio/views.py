@@ -29,8 +29,9 @@ def send_contact_email(form):
 def home(request):
     profile = Profile.objects.first()
     skills = Skill.objects.all()
-    featured_projects = Project.objects.filter(is_featured=True)
-    projects = Project.objects.filter(is_featured=False)
+    # Exclude blockchain projects from home page
+    featured_projects = Project.objects.filter(is_featured=True, is_blockchain=False)
+    projects = Project.objects.filter(is_featured=False, is_blockchain=False)
     certificates = Certificate.objects.all()
     form = ContactForm()
 
@@ -54,7 +55,8 @@ def home(request):
 def terminal_view(request):
     profile = Profile.objects.first()
     skills = Skill.objects.all()
-    projects = Project.objects.all()
+    # Only show blockchain projects in terminal view
+    projects = Project.objects.filter(is_blockchain=True)
     certificates = Certificate.objects.all()
     form = ContactForm()
 
@@ -70,17 +72,4 @@ def terminal_view(request):
     return render(request, "terminal.html", {
         "profile": profile, "skills": skills, "projects": projects,
         "certificates": certificates, "form": form,
-    })
-
-# blockchain view remains the same...
-
-def blockchain(request):
-    profile = Profile.objects.first()
-    skills = Skill.objects.all()
-    projects = Project.objects.all()
-
-    return render(request, "blockchain.html", {
-        "profile": profile,
-        "skills": skills,
-        "projects": projects,
     })
