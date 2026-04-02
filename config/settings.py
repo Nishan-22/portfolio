@@ -16,10 +16,10 @@ os.environ.setdefault('DJANGO_SUPERUSER_USERNAME', os.getenv('ADMIN_USERNAME', '
 os.environ.setdefault('DJANGO_SUPERUSER_EMAIL', os.getenv('ADMIN_EMAIL', 'admin@example.com'))
 os.environ.setdefault('DJANGO_SUPERUSER_PASSWORD', os.getenv('ADMIN_PASSWORD', 'admin123'))
 
-# Cloudinary configuration
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+try:
+    import cloudinary
+except ModuleNotFoundError:
+    cloudinary = None
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -48,10 +48,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'portfolio',
 
-    # Cloudinary
-    'cloudinary',
-    'cloudinary_storage',
 ]
+
+if cloudinary is not None:
+    INSTALLED_APPS += [
+        'cloudinary',
+        'cloudinary_storage',
+    ]
 
 
 # MIDDLEWARE
@@ -133,23 +136,34 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
 }
 
-cloudinary.config(
-    cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
-    api_key=CLOUDINARY_STORAGE['API_KEY'],
-    api_secret=CLOUDINARY_STORAGE['API_SECRET']
-)
-
-# Django 6+ storage configuration
-STORAGES = {
-    'default': {
-        'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
-    },
-    'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
-    },
-}
-
+# Default local media storage (used in local/dev fallback)
 MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+if cloudinary is not None and all(CLOUDINARY_STORAGE.values()):
+    cloudinary.config(
+        cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
+        api_key=CLOUDINARY_STORAGE['API_KEY'],
+        api_secret=CLOUDINARY_STORAGE['API_SECRET'],
+    )
+
+    STORAGES = {
+        'default': {
+            'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        },
+    }
+else:
+    STORAGES = {
+        'default': {
+            'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        },
+    }
 
 
 # EMAIL CONFIG

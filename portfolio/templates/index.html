@@ -120,45 +120,43 @@
     <div x-show="dark" class="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/5 blur-[120px] rounded-full"></div>
     <div x-show="dark" class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/5 blur-[120px] rounded-full"></div>
     
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-12 gap-10 md:gap-20 relative z-10">
-        <div class="md:col-span-5">
-            <div class="md:sticky md:top-32">
-                <p class="text-blue-500 uppercase tracking-[0.3em] text-xs font-bold mb-4 flex items-center gap-3">
-                    <span class="w-8 h-[1px] bg-blue-500 inline-block"></span>
-                    Capabilities
-                    <span class="w-8 h-[1px] bg-blue-500 inline-block"></span>
-                </p>
-                
-                <h2 class="heading-font text-3xl sm:text-4xl md:text-6xl font-bold uppercase mb-6 leading-tight text-slate-900 dark:text-white">
-                    What I Do
-                </h2>
-                
-                <div class="w-20 h-1 bg-blue-600 mb-8"></div>
-                
-                <p class="text-slate-700 dark:text-gray-300 text-base leading-relaxed mb-8 font-medium">
-                    {{ profile.bio }}
-                </p>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+        <p class="text-blue-500 uppercase tracking-[0.3em] text-xs font-bold mb-4 flex items-center gap-3">
+            <span class="w-8 h-[1px] bg-blue-500 inline-block"></span>
+            Capabilities
+            <span class="w-8 h-[1px] bg-blue-500 inline-block"></span>
+        </p>
+        
+        <h2 class="heading-font text-3xl sm:text-4xl md:text-6xl font-bold uppercase mb-6 leading-tight text-slate-900 dark:text-white">
+            What I Do
+        </h2>
+        
+        <div class="w-20 h-1 bg-blue-600 mb-8"></div>
+        
+        <p class="text-slate-700 dark:text-gray-300 text-lg md:text-xl leading-relaxed md:leading-9 mb-8 font-medium max-w-3xl">
+            {{ profile.bio }}
+        </p>
 
-                <a href="#contact" class="inline-flex items-center gap-3 text-blue-600 hover:text-blue-700 transition font-bold uppercase tracking-widest text-xs group">
-                    Let's Work Together
-                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                </a>
-            </div>
+        <div class="mb-8">
+            <p class="text-xs uppercase tracking-[0.25em] text-slate-500 dark:text-gray-400 font-semibold mb-4">Core Skills</p>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {% for skill in skills %}
+                <li class="flex items-center gap-3 bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg px-4 py-3">
+                    <span class="w-9 h-9 rounded-lg bg-blue-600/10 text-blue-600 flex items-center justify-center shrink-0">
+                        <i class="fa-brands fa-{{ skill.icon_name }}"></i>
+                    </span>
+                    <span class="text-sm md:text-base font-semibold text-slate-800 dark:text-gray-200">
+                        {{ skill.name }}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
         </div>
 
-        <div class="md:col-span-7 grid sm:grid-cols-2 gap-6 md:gap-8">
-            {% for skill in skills %}
-            <div class="group bg-white dark:bg-white/5 rounded-xl p-8 border border-slate-200 dark:border-white/10 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
-                <div class="w-16 h-16 flex items-center justify-center bg-blue-600/10 rounded-xl mb-6 group-hover:bg-blue-600 transition-colors duration-300">
-                    <i class="fa-brands fa-{{ skill.icon_name }} text-blue-600 text-3xl group-hover:text-white transition-colors duration-300"></i>
-                </div>
-                <h3 class="heading-font uppercase font-bold text-xl mb-3 text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">{{ skill.name }}</h3>
-                <p class="text-xs uppercase tracking-wider text-slate-600 dark:text-gray-400 group-hover:text-slate-700 dark:group-hover:text-gray-300">
-                    Modern & scalable solutions
-                </p>
-            </div>
-            {% endfor %}
-        </div>
+        <a href="#contact" class="inline-flex items-center gap-3 text-blue-600 hover:text-blue-700 transition font-bold uppercase tracking-widest text-xs group">
+            Let's Work Together
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+        </a>
     </div>
 </section>
 
