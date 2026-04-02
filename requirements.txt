@@ -1,0 +1,7 @@
+Django>=6.0,<7.0
+gunicorn
+pillow
+psycopg2-binary
+dj-database-url
+python-decouple
+whitenoise[brotli]

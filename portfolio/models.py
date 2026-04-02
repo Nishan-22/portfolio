@@ -50,3 +50,22 @@ class Certificate(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True, help_text="Unique URL identifier (e.g., 'my-first-blockchain-post')")
+    category = models.CharField(max_length=100, default="Blockchain")
+    excerpt = models.TextField(help_text="Short summary of the post")
+    content = models.TextField()
+    image = models.ImageField(upload_to="blog/", blank=True)
+    is_published = models.BooleanField(default=False)
+    published_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-published_at', '-created_at']
+
+    def __str__(self):
+        return self.title

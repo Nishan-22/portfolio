@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Skill, Project , Certificate
+from .models import Profile, Skill, Project , Certificate, BlogPost
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -18,3 +18,11 @@ class ProjectAdmin(admin.ModelAdmin):
 class CertificateAdmin(admin.ModelAdmin):
     list_display = ("title", "issuer", "issued_date")
     search_fields = ("title", "issuer")
+
+@admin.register(BlogPost)
+class BlogPostAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'is_published', 'published_at', 'created_at')
+    list_filter = ('is_published', 'category')
+    search_fields = ('title', 'content', 'excerpt')
+    prepopulated_fields = {'slug': ('title',)}
+    ordering = ('-published_at', '-created_at')

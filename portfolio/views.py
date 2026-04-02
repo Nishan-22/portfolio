@@ -3,7 +3,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.http import JsonResponse
 
-from .models import Project, Skill, Profile, Certificate
+from .models import Project, Skill, Profile, Certificate, BlogPost
 from .forms import ContactForm
 
 # ======================================================
@@ -52,24 +52,32 @@ def home(request):
         "projects": projects, "certificates": certificates, "form": form,
     })
 
-def terminal_view(request):
+def contact(request):
     profile = Profile.objects.first()
-    skills = Skill.objects.all()
-    # Only show blockchain projects in terminal view
-    projects = Project.objects.filter(is_blockchain=True)
-    certificates = Certificate.objects.all()
     form = ContactForm()
 
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
             try:
-                send_contact_email(form) # 3. Actually send the email
-                return redirect('terminal') # 4. Clear resubmission popup
+                send_contact_email(form)
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'success': True})
+                return redirect('contact')
             except Exception as e:
-                print(f"Error: {e}")
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'success': False}, status=500)
+
+    return render(request, "contact.html", {
+        "profile": profile, "form": form,
+    })
+
+def terminal_view(request):
+    # Only show blockchain projects in terminal view
+    projects = Project.objects.filter(is_blockchain=True)
+    # Get published blog posts
+    blog_posts = BlogPost.objects.filter(is_published=True)[:6]  # Show latest 6 posts
 
     return render(request, "terminal.html", {
-        "profile": profile, "skills": skills, "projects": projects,
-        "certificates": certificates, "form": form,
+        "projects": projects, "blog_posts": blog_posts,
     })

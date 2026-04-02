@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ profile.name }} | TERMINAL_V2</title>
+    <title>{{ profile.name }} | WEB3 & BLOCKCHAIN</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap">
@@ -12,6 +12,7 @@
     <style>
         :root { 
             --primary: #00f2ff; 
+            --secondary: #7b2cbf;
             --bg-dark: #050505; 
             --card-bg: #0a0a0a;
             --border: rgba(0, 242, 255, 0.2);
@@ -24,59 +25,114 @@
             line-height: 1.6;
         }
 
-        /* Subtle background grid */
+        /* Animated background grid */
         .bg-grid {
             position: fixed; inset: 0; z-index: -1;
-            background-image: radial-gradient(circle, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, rgba(123, 44, 191, 0.1) 0%, transparent 50%);
+            background-size: 40px 40px, 100% 100%;
+            animation: pulse 8s ease-in-out infinite;
         }
 
-        /* Clean Terminal Cards */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Terminal Cards */
         .term-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
         
+        .term-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .term-card:hover::before {
+            transform: translateX(100%);
+        }
+
         .term-card:hover {
             border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.15), inset 0 0 20px rgba(0, 242, 255, 0.05);
+            transform: translateY(-5px);
         }
 
         .term-header {
-            background: rgba(0, 242, 255, 0.1);
+            background: linear-gradient(180deg, rgba(0, 242, 255, 0.1) 0%, transparent 100%);
             border-bottom: 1px solid var(--border);
-            padding: 8px 16px;
+            padding: 12px 20px;
             font-size: 11px;
             font-weight: bold;
             color: var(--primary);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         /* Navigation */
         .nav-link {
             position: relative;
-            padding: 5px 10px;
-            transition: 0.3s;
-        }
-        .nav-link:hover { color: var(--primary); }
-        .nav-link:hover::after {
-            content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: var(--primary);
+            padding: 8px 12px;
+            color: #9ca3af;
+            transition: all 0.3s ease;
         }
 
-        /* Typography improvements */
+        .nav-link:hover { 
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* Glowing headings */
         .heading-glow {
             color: #fff;
-            text-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+            text-shadow: 0 0 20px rgba(0, 242, 255, 0.5), 0 0 40px rgba(0, 242, 255, 0.3);
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            padding-right: 40px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 30px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--primary), transparent);
         }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); border-left: 1px solid rgba(0, 242, 255, 0.1); }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(180deg, var(--primary), var(--secondary)); 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover { 
+            background: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
 
         #boot { background: #000; z-index: 9999; }
         
@@ -87,22 +143,67 @@
             background: var(--primary);
             margin-left: 5px;
             animation: blink 1s step-end infinite;
+            box-shadow: 0 0 10px var(--primary);
         }
+
         @keyframes blink { from, to { opacity: 1; } 50% { opacity: 0; } }
 
         .btn-action {
+            position: relative;
+            overflow: hidden;
             border: 1px solid var(--primary);
-            padding: 12px 24px;
-            font-size: 14px;
+            padding: 14px 28px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--primary);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: 0.3s;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            background: transparent;
         }
+
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-action:hover::before {
+            left: 100%;
+        }
+
         .btn-action:hover {
-            background: var(--primary);
-            color: #000;
+            background: rgba(0, 242, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3), inset 0 0 10px rgba(0, 242, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* Blog specific styles */
+        .blog-meta {
+            font-size: 10px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .tag-pill {
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 9px;
+            border: 1px solid var(--border);
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .tag-pill:hover {
+            background: rgba(0, 242, 255, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
         }
     </style>
 </head>
@@ -110,7 +211,7 @@
 
     <div class="bg-grid"></div>
 
-    <!-- SIMPLE BOOT -->
+    <!-- BOOT SEQUENCE -->
     <div id="boot" class="fixed inset-0 flex items-center justify-center p-8">
         <div class="w-full max-w-xl font-mono text-cyan-500">
             <div id="boot-log" class="text-lg leading-relaxed"></div>
@@ -118,146 +219,195 @@
     </div>
 
     <!-- NAVBAR -->
-    <nav class="fixed top-0 w-full z-[100] border-b border-white/5 bg-black/80 backdrop-blur-md px-6 py-4">
+    <nav class="fixed top-0 w-full z-[100] border-b border-white/5 bg-black/90 backdrop-blur-md px-6 py-4">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <span class="text-cyan-500 font-bold text-xl tracking-tighter">[SYS.{{ profile.name|slice:":3"|upper }}]</span>
+                <i class="fa-solid fa-cube text-cyan-500 text-2xl animate-pulse"></i>
+                <span class="text-cyan-500 font-bold text-xl tracking-tighter">[WEB3_BLOCKCHAIN]</span>
             </div>
-            <div class="flex items-center gap-8 text-sm font-medium uppercase tracking-widest">
-                <a href="#projects" class="nav-link">Projects</a>
-                <a href="#skills" class="nav-link">Stack</a>
-                <a href="{% url 'home' %}" class="text-white border border-white/20 px-4 py-2 hover:bg-white hover:text-black transition-all">
-                    Exit
+            <div class="flex items-center gap-6 text-sm font-medium uppercase tracking-widest">
+                <a href="#projects" class="nav-link active">Projects</a>
+                <a href="#blog" class="nav-link">Blog</a>
+                <a href="{% url 'home' %}" class="text-white border border-white/20 px-5 py-2 hover:bg-cyan-500 hover:border-cyan-500 hover:text-black transition-all">
+                    Exit_Terminal
                 </a>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto px-6 pt-32 pb-20">
+    <main class="max-w-7xl mx-auto px-6 pt-24 pb-20">
         
-        <!-- HERO -->
-        <header class="py-20 mb-20">
-            <div class="flex flex-col md:flex-row gap-12 items-center">
-                <div class="w-48 h-48 border-2 border-cyan-500 p-2 shrink-0">
-                    <img src="{{ profile.profile_image.url }}" class="w-full h-full object-cover grayscale" alt="User">
+        <!-- HERO SECTION -->
+        <header class="py-16 mb-20">
+            <div class="text-center">
+                <div class="inline-flex items-center gap-2 text-cyan-500 text-xs font-bold tracking-[0.3em] uppercase px-4 py-2 border border-cyan-500/30 bg-cyan-500/5 mb-6">
+                    <i class="fa-solid fa-circle-check animate-pulse"></i>
+                    Blockchain_Development_Hub
                 </div>
-                <div class="space-y-6">
-                    <div class="text-cyan-500 text-sm font-bold tracking-[0.4em] uppercase">Authenticated_Identity</div>
-                    <h1 class="text-5xl md:text-7xl font-bold text-white heading-glow uppercase tracking-tighter">
-                        {{ profile.name }}
-                    </h1>
-                    <p class="text-xl text-gray-400 max-w-2xl font-light">
-                        {{ profile.bio }}
-                    </p>
+                <h1 class="text-5xl md:text-7xl font-bold text-white heading-glow uppercase tracking-tighter leading-none mb-6">
+                    WEB3 <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-purple-500">&</span> BLOCKCHAIN
+                </h1>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed">
+                    Decentralized solutions, smart contracts, and the future of Web3 technology
+                </p>
+                <div class="flex flex-wrap gap-4 pt-8 justify-center">
+                    <span class="tag-pill"><i class="fa-brands fa-ethereum mr-2"></i>Smart_Contracts</span>
+                    <span class="tag-pill"><i class="fa-solid fa-link mr-2"></i>DeFi_Protocols</span>
+                    <span class="tag-pill"><i class="fa-solid fa-cube mr-2"></i>Web3_Integration</span>
+                    <span class="tag-pill"><i class="fa-solid fa-shield-halved mr-2"></i>Blockchain_Security</span>
+                    <span class="tag-pill"><i class="fa-solid fa-coins mr-2"></i>Cryptocurrency</span>
                 </div>
             </div>
         </header>
 
-        <!-- PROJECTS -->
-        <section id="projects" class="mb-32">
-            <div class="flex items-center gap-4 mb-12">
-                <h2 class="text-2xl font-bold text-white uppercase tracking-wider">Active_Deployments</h2>
-                <div class="h-[1px] flex-1 bg-white/10"></div>
+        <!-- BLOCKCHAIN PROJECTS -->
+        <section id="projects" class="mb-40">
+            <div class="flex items-center gap-6 mb-16">
+                <i class="fa-solid fa-folder-open text-cyan-500 text-3xl"></i>
+                <h2 class="text-3xl font-bold text-white uppercase tracking-wider section-title">Deployed_Protocols</h2>
+                <div class="h-[1px] flex-1 bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                <span class="text-cyan-500 font-mono text-sm">{{ projects.count }}_NODES_ACTIVE</span>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {% for project in projects %}
-                <div class="term-card overflow-hidden">
+                <div class="term-card group">
                     <div class="term-header">
-                        <span>PROJECT_{{ forloop.counter }}</span>
-                        <span class="text-[9px] opacity-60">ID: {{ project.id|default:"00x" }}</span>
+                        <span><i class="fa-solid fa-code-branch mr-2"></i>PROTOCOL_{{ forloop.counter|stringformat:"02d" }}</span>
+                        <span class="text-[9px] opacity-60">HASH: 0x{{ project.id|default:"0000" }}{{ forloop.counter|stringformat:"02x" }}</span>
                     </div>
-                    <div class="p-8 space-y-4">
-                        <h3 class="text-2xl font-bold text-white uppercase tracking-tight group-hover:text-cyan-500 transition-colors">
-                            {{ project.title }}
-                        </h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">
-                            {{ project.description }}
-                        </p>
-                        <div class="flex flex-wrap gap-2 pt-2">
-                            <span class="text-[10px] px-2 py-1 bg-white/5 border border-white/10 text-gray-400 uppercase">{{ project.category }}</span>
+                    <div class="p-8 space-y-5">
+                        {% if project.image %}
+                        <div class="overflow-hidden rounded border border-white/10">
+                            <img src="{{ project.image.url }}" class="w-full aspect-video object-cover group-hover:scale-105 transition duration-500 grayscale group-hover:grayscale-0" alt="{{ project.title }}">
                         </div>
-                        <div class="pt-6">
-                            <a href="{{ project.link }}" target="_blank" class="btn-action w-full inline-block text-center">
-                                View Deployment
+                        {% endif %}
+                        
+                        <div>
+                            <div class="flex items-start justify-between mb-3">
+                                <h3 class="text-2xl font-bold text-white uppercase tracking-tight group-hover:text-cyan-400 transition-colors">
+                                    {{ project.title }}
+                                </h3>
+                                <span class="tag-pill">{{ project.category }}</span>
+                            </div>
+                            <p class="text-gray-400 text-sm leading-relaxed line-clamp-3">
+                                {{ project.description }}
+                            </p>
+                        </div>
+
+                        <div class="pt-4 flex gap-3">
+                            {% if project.link %}
+                            <a href="{{ project.link }}" target="_blank" class="btn-action flex-1 inline-block text-center">
+                                <i class="fa-solid fa-external-link-alt mr-2"></i>Launch_dApp
                             </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="col-span-2 py-20 text-center border border-dashed border-white/10">
-                    <p class="text-gray-500 uppercase tracking-widest text-sm">No_Active_Nodes_Found</p>
+                <div class="col-span-2 py-20 text-center border border-dashed border-white/10 rounded-lg">
+                    <i class="fa-solid fa-triangle-exclamation text-5xl text-gray-600 mb-4"></i>
+                    <p class="text-gray-500 uppercase tracking-widest text-sm">No_Active_Protocols_Found</p>
+                    <p class="text-gray-600 text-xs mt-2">Initializing_deployment_sequence...</p>
                 </div>
                 {% endfor %}
             </div>
         </section>
 
-        <!-- SKILLS -->
-        <section id="skills" class="mb-32">
-            <div class="flex items-center gap-4 mb-12">
-                <h2 class="text-2xl font-bold text-white uppercase tracking-wider">System_Capabilities</h2>
-                <div class="h-[1px] flex-1 bg-white/10"></div>
+        <!-- BLOG SECTION -->
+        <section id="blog" class="mb-40">
+            <div class="flex items-center gap-6 mb-16">
+                <i class="fa-solid fa-newspaper text-purple-500 text-3xl"></i>
+                <h2 class="text-3xl font-bold text-white uppercase tracking-wider section-title">Blockchain_Insights</h2>
+                <div class="h-[1px] flex-1 bg-gradient-to-r from-purple-500/50 to-transparent"></div>
+                <span class="text-purple-500 font-mono text-sm">{{ blog_posts.count }}_ARTICLES_INDEXED</span>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {% for skill in skills %}
-                <div class="term-card p-6 text-center space-y-3">
-                    <div class="text-2xl text-cyan-500">
-                        <i class="fa-brands fa-{{ skill.icon_name|default:'codepen' }}"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for post in blog_posts %}
+                <article class="term-card group">
+                    <div class="term-header">
+                        <span><i class="fa-solid fa-feather mr-2"></i>POST_{{ forloop.counter|stringformat:"02d" }}</span>
+                        <span class="text-[9px] opacity-60">{{ post.published_at|date:"Y.m.d" }}</span>
                     </div>
-                    <div class="text-[11px] font-bold text-white uppercase tracking-widest">{{ skill.name }}</div>
+                    <div class="p-6 space-y-4">
+                        {% if post.image %}
+                        <div class="overflow-hidden rounded border border-white/10">
+                            <img src="{{ post.image.url }}" class="w-full aspect-video object-cover group-hover:scale-105 transition duration-500" alt="{{ post.title }}">
+                        </div>
+                        {% else %}
+                        <div class="w-full aspect-video bg-gradient-to-br from-purple-900/20 to-cyan-900/20 border border-white/10 flex items-center justify-center">
+                            <i class="fa-solid fa-pen-nib text-5xl text-white/10"></i>
+                        </div>
+                        {% endif %}
+
+                        <div>
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="tag-pill" style="border-color: rgba(123, 44, 191, 0.3); color: #c084fc;">{{ post.category }}</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white uppercase tracking-tight group-hover:text-purple-400 transition-colors mb-3 line-clamp-2">
+                                {{ post.title }}
+                            </h3>
+                            <p class="text-gray-400 text-sm leading-relaxed line-clamp-3">
+                                {{ post.excerpt }}
+                            </p>
+                        </div>
+
+                        <div class="pt-4 flex items-center justify-between">
+                            <div class="blog-meta">
+                                <i class="fa-regular fa-clock mr-1"></i>
+                                {{ post.created_at|timesince }}_AGO
+                            </div>
+                            <a href="#" class="text-purple-400 hover:text-purple-300 text-xs uppercase tracking-widest border-b border-purple-500/30 hover:border-purple-400 pb-1 transition-all">
+                                Read_More<i class="fa-solid fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="col-span-2 lg:col-span-3 py-20 text-center border border-dashed border-white/10 rounded-lg">
+                    <i class="fa-solid fa-inbox text-5xl text-gray-600 mb-4"></i>
+                    <p class="text-gray-500 uppercase tracking-widest text-sm">No_Articles_Published_Yet</p>
+                    <p class="text-gray-600 text-xs mt-2">Content_matrix_initializing...</p>
                 </div>
                 {% endfor %}
             </div>
-        </section>
 
-        <!-- CONTACT -->
-        <section id="contact" class="max-w-3xl mx-auto">
-            <div class="term-card">
-                <div class="term-header">
-                    <span>SECURE_CHANNEL_INIT</span>
-                    <span>AES_256_ENCRYPTED</span>
-                </div>
-                <div class="p-8 md:p-12">
-                    <form method="POST" class="space-y-6">
-                        {% csrf_token %}
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Operator_Name</label>
-                                <input type="text" name="name" required class="w-full bg-black border border-white/10 p-3 outline-none focus:border-cyan-500 text-white transition-all">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Return_Address</label>
-                                <input type="email" name="email" class="w-full bg-black border border-white/10 p-3 outline-none focus:border-cyan-500 text-white transition-all">
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Message_Payload</label>
-                            <textarea name="message" rows="5" required class="w-full bg-black border border-white/10 p-3 outline-none focus:border-cyan-500 text-white transition-all"></textarea>
-                        </div>
-                        <button type="submit" class="btn-action w-full">
-                            Execute_Broadcast
-                        </button>
-                    </form>
-                </div>
+            {% if blog_posts.count > 0 %}
+            <div class="text-center mt-12">
+                <a href="#" class="btn-action inline-flex items-center">
+                    <i class="fa-solid fa-archive mr-2"></i>View_All_Articles
+                </a>
             </div>
+            {% endif %}
         </section>
 
     </main>
 
     <!-- FOOTER -->
-    <footer class="py-10 border-t border-white/5 text-center">
-        <p class="text-[10px] text-gray-600 uppercase tracking-[0.5em]">
-            &copy; 2024 {{ profile.name }} // End_of_Line.
-        </p>
+    <footer class="py-12 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="flex items-center justify-center gap-4 mb-4">
+                <i class="fa-brands fa-github text-gray-500 hover:text-cyan-500 transition cursor-pointer"></i>
+                <i class="fa-brands fa-linkedin text-gray-500 hover:text-cyan-500 transition cursor-pointer"></i>
+                <i class="fa-brands fa-twitter text-gray-500 hover:text-cyan-500 transition cursor-pointer"></i>
+            </div>
+            <p class="text-[9px] text-gray-600 uppercase tracking-[0.5em]">
+                &copy; 2026 {{ profile.name }} // DECENTRALIZED_PORTFOLIO_v2.0
+            </p>
+            <p class="text-[8px] text-gray-700 mt-2 font-mono">
+                BLOCKCHAIN_VERIFIED | IMMUTABLE_RECORD | 0x{{ profile.id|default:"0000" }}
+            </p>
+        </div>
     </footer>
 
     <script>
         const lines = [
-            "> AUTHENTICATING...",
-            "> CONNECTION_STABLE",
-            "> IDENTITY_VERIFIED: {{ profile.name|upper }}",
-            "> WELCOME_OPERATOR."
+            "> INITIALIZING_WEB3_ENVIRONMENT...",
+            "> CONNECTING_TO_BLOCKCHAIN...",
+            "> AUTHENTICATING_SMART_CONTRACTS...",
+            "> LOADING_DEPLOYED_PROTOCOLS...",
+            "> WELCOME_TO_THE_FUTURE_OPERATOR."
         ];
 
         const logEl = document.getElementById('boot-log');
@@ -279,12 +429,12 @@
             charIdx++;
 
             if (charIdx < fullText.length) {
-                setTimeout(typeEffect, 30); 
+                setTimeout(typeEffect, 25);
             } else {
                 lineIdx++;
                 charIdx = 0;
                 if (lineIdx < lines.length) {
-                    setTimeout(typeEffect, 400); 
+                    setTimeout(typeEffect, 300);
                 } else {
                     const cursor = document.createElement('span');
                     cursor.className = "cursor";
@@ -295,7 +445,7 @@
                         boot.style.transition = "opacity 0.8s ease";
                         boot.style.opacity = '0';
                         setTimeout(() => boot.remove(), 800);
-                    }, 1200); 
+                    }, 1000);
                 }
             }
         }
