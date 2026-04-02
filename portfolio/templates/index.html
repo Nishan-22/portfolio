@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" x-data="{
-    dark: localStorage.getItem('darkMode') !== 'false'
+    dark: localStorage.getItem('darkMode') !== 'false',
+    mobileOpen: false
 }" :class="{ 'dark': dark }" @dark.window="localStorage.setItem('darkMode', dark)">
 <head>
     <meta charset="UTF-8">
@@ -38,12 +39,12 @@
 
 <!-- NAVBAR -->
 <nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-[#0b001a]/80 backdrop-blur-md border-b border-slate-200 dark:border-white/5">
-    <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-        <div class="heading-font text-2xl font-bold uppercase">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 md:h-20 flex justify-between items-center">
+        <div class="heading-font text-lg sm:text-xl md:text-2xl font-bold uppercase truncate max-w-[65vw] md:max-w-none">
             {{ profile.name|cut:" " }}
         </div>
 
-        <div class="flex items-center gap-8">
+        <div class="flex items-center gap-3 md:gap-8">
             <div class="hidden md:flex gap-8 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-gray-400">
                 <a href="#home" class="hover:text-blue-500 transition">Home</a>
                 <a href="#services" class="hover:text-blue-500 transition">Services</a>
@@ -55,26 +56,42 @@
                 </a>
             </div>
 
+            <button @click="mobileOpen = !mobileOpen"
+                class="md:hidden w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition"
+                :aria-expanded="mobileOpen.toString()" aria-label="Toggle navigation menu">
+                <i class="fa-solid" :class="mobileOpen ? 'fa-xmark' : 'fa-bars'"></i>
+            </button>
+
             <button @click="dark = !dark; localStorage.setItem('darkMode', dark)"
                 class="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition">
                 <i class="fa-solid" :class="dark ? 'fa-sun text-yellow-400' : 'fa-moon text-blue-600'"></i>
             </button>
         </div>
     </div>
+
+    <div x-show="mobileOpen" x-transition class="md:hidden border-t border-slate-200 dark:border-white/10 bg-white/95 dark:bg-[#0b001a]/95 backdrop-blur-md">
+        <div class="px-4 py-4 flex flex-col gap-4 text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-gray-300">
+            <a @click="mobileOpen = false" href="#home" class="hover:text-blue-500 transition">Home</a>
+            <a @click="mobileOpen = false" href="#services" class="hover:text-blue-500 transition">Services</a>
+            <a @click="mobileOpen = false" href="#projects" class="hover:text-blue-500 transition">Portfolio</a>
+            <a @click="mobileOpen = false" href="{% url 'contact' %}" class="hover:text-blue-500 transition">Contact</a>
+            <a @click="mobileOpen = false" href="{% url 'terminal' %}" class="hover:text-blue-500 transition">Web 3 Projects</a>
+        </div>
+    </div>
 </nav>
 
 <!-- HERO -->
-<section id="home" class="relative min-h-screen flex items-center pt-20">
+<section id="home" class="relative min-h-[90vh] md:min-h-screen flex items-center pt-20 md:pt-24">
     <div x-show="dark" class="absolute top-1/4 -left-20 w-96 h-96 bg-purple-600/20 blur-[120px] rounded-full"></div>
     <div x-show="dark" class="absolute bottom-1/4 -right-20 w-96 h-96 bg-blue-600/10 blur-[120px] rounded-full"></div>
 
-    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-12 gap-12 items-center relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-12 gap-8 md:gap-12 items-center relative z-10">
         <div class="md:col-span-7">
             <p class="text-blue-500 uppercase tracking-[0.3em] text-xs font-bold mb-4">
                 Web Developer
             </p>
 
-            <h1 class="heading-font text-6xl md:text-8xl font-bold leading-[0.9] uppercase mb-8">
+            <h1 class="heading-font text-4xl sm:text-6xl md:text-8xl font-bold leading-[0.95] md:leading-[0.9] uppercase mb-6 md:mb-8">
                 Hi, I am <br>
                 <span class="opacity-20 border-b-4 border-blue-600">
                     {{ profile.name }}
@@ -82,7 +99,7 @@
             </h1>
 
             <a href="#projects"
-               class="inline-flex items-center gap-3 bg-blue-600 text-white text-xs font-bold uppercase tracking-widest px-8 py-4 hover:bg-blue-700 transition shadow-lg shadow-blue-500/20">
+               class="inline-flex items-center gap-3 bg-blue-600 text-white text-xs font-bold uppercase tracking-widest px-6 md:px-8 py-3.5 md:py-4 hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 min-h-11">
                 See Projects <i class="fa-solid fa-arrow-right"></i>
             </a>
         </div>
@@ -98,12 +115,12 @@
 </section>
 
 <!-- SERVICES -->
-<section id="services" class="py-32 bg-slate-50 dark:bg-[#080014] border-y border-slate-200 dark:border-white/5 relative overflow-hidden">
+<section id="services" class="py-20 md:py-32 bg-slate-50 dark:bg-[#080014] border-y border-slate-200 dark:border-white/5 relative overflow-hidden">
     <!-- Background decorative elements -->
     <div x-show="dark" class="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/5 blur-[120px] rounded-full"></div>
     <div x-show="dark" class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/5 blur-[120px] rounded-full"></div>
     
-    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-12 gap-20 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-12 gap-10 md:gap-20 relative z-10">
         <div class="md:col-span-5">
             <div class="sticky top-32">
                 <p class="text-blue-500 uppercase tracking-[0.3em] text-xs font-bold mb-4 flex items-center gap-3">
@@ -112,7 +129,7 @@
                     <span class="w-8 h-[1px] bg-blue-500 inline-block"></span>
                 </p>
                 
-                <h2 class="heading-font text-5xl md:text-6xl font-bold uppercase mb-6 leading-tight text-slate-900 dark:text-white">
+                <h2 class="heading-font text-3xl sm:text-4xl md:text-6xl font-bold uppercase mb-6 leading-tight text-slate-900 dark:text-white">
                     What I Do
                 </h2>
                 
@@ -129,7 +146,7 @@
             </div>
         </div>
 
-        <div class="md:col-span-7 grid sm:grid-cols-2 gap-8">
+        <div class="md:col-span-7 grid sm:grid-cols-2 gap-6 md:gap-8">
             {% for skill in skills %}
             <div class="group bg-white dark:bg-white/5 rounded-xl p-8 border border-slate-200 dark:border-white/10 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
                 <div class="w-16 h-16 flex items-center justify-center bg-blue-600/10 rounded-xl mb-6 group-hover:bg-blue-600 transition-colors duration-300">
@@ -146,13 +163,13 @@
 </section>
 
 <!-- PROJECTS -->
-<section id="projects" class="py-32 border-t border-slate-200 dark:border-white/5">
-    <div class="max-w-7xl mx-auto px-6">
-        <h2 class="heading-font text-4xl font-bold uppercase mb-12">
+<section id="projects" class="py-20 md:py-32 border-t border-slate-200 dark:border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <h2 class="heading-font text-3xl md:text-4xl font-bold uppercase mb-8 md:mb-12">
             Recent <span class="text-blue-600">Works</span>
         </h2>
 
-        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
             {% for project in projects %}
             <div class="bg-white dark:bg-white/5 rounded-lg border border-slate-200 dark:border-white/10 overflow-hidden hover:shadow-xl transition">
                 <img src="{{ project.image.url }}" class="w-full aspect-video object-cover">
@@ -170,18 +187,18 @@
 </section>
 
 <!-- CERTIFICATES -->
-<section id="certificates" class="py-32 bg-slate-50 dark:bg-[#080014] border-t border-slate-200 dark:border-white/5">
-    <div class="max-w-7xl mx-auto px-6">
+<section id="certificates" class="py-20 md:py-32 bg-slate-50 dark:bg-[#080014] border-t border-slate-200 dark:border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
 
         <p class="text-blue-500 uppercase tracking-widest text-xs font-bold mb-2">
             Credentials
         </p>
 
-        <h2 class="heading-font text-4xl font-bold uppercase mb-12">
+        <h2 class="heading-font text-3xl md:text-4xl font-bold uppercase mb-8 md:mb-12">
             Certifications
         </h2>
 
-        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
 
             {% for cert in certificates %}
             <div
@@ -220,8 +237,8 @@
 </section>
 
 <!-- FOOTER -->
-<footer class="border-t border-slate-200 dark:border-white/5 py-12">
-    <div class="max-w-7xl mx-auto px-6 text-center">
+<footer class="border-t border-slate-200 dark:border-white/5 py-10 md:py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
         <p class="text-sm text-slate-600 dark:text-gray-400 mb-2">
             © 2026 {{ profile.name }}. All rights reserved.
         </p>
