@@ -9,6 +9,13 @@ import os
 import dj_database_url
 from decouple import config
 
+# -----------------------------------------
+# SUPERUSER ENV MAPPING (REQUIRED)
+# -----------------------------------------
+os.environ.setdefault('DJANGO_SUPERUSER_USERNAME', os.getenv('ADMIN_USERNAME', 'admin'))
+os.environ.setdefault('DJANGO_SUPERUSER_EMAIL', os.getenv('ADMIN_EMAIL', 'admin@example.com'))
+os.environ.setdefault('DJANGO_SUPERUSER_PASSWORD', os.getenv('ADMIN_PASSWORD', 'admin123'))
+
 # Cloudinary configuration
 import cloudinary
 import cloudinary.uploader
@@ -151,36 +158,3 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # DEFAULT PK
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-# -----------------------------------------
-# AUTO CREATE SUPERUSER (FOR RENDER)
-# -----------------------------------------
-
-from django.contrib.auth import get_user_model
-
-def create_superuser():
-    try:
-        User = get_user_model()
-
-        username = os.getenv("ADMIN_USERNAME")
-        email = os.getenv("ADMIN_EMAIL")
-        password = os.getenv("ADMIN_PASSWORD")
-
-        if username and password and email:
-            if not User.objects.filter(username=username).exists():
-                print("Creating superuser...")
-                User.objects.create_superuser(
-                    username=username,
-                    email=email,
-                    password=password
-                )
-            else:
-                print("Superuser already exists.")
-    except Exception as e:
-        print(f"Error creating superuser: {e}")
-
-
-# Run only in production
-if not DEBUG:
-    create_superuser()
