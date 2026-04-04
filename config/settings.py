@@ -32,10 +32,23 @@ SECRET_KEY = config(
 
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS',
-    default='localhost,127.0.0.1'
-).split(',')
+ALLOWED_HOSTS = [
+    h.strip() for h in config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',') if h.strip()
+]
+
+# HTTPS / CSRF (required for POST on Render and other reverse proxies)
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+_csrf_origins = [
+    o.strip() for o in config('CSRF_TRUSTED_ORIGINS', default='').split(',') if o.strip()
+]
+_render_public = (os.environ.get('RENDER_EXTERNAL_URL') or '').rstrip('/')
+if _render_public and _render_public not in _csrf_origins:
+    _csrf_origins.append(_render_public)
+CSRF_TRUSTED_ORIGINS = _csrf_origins
 
 
 # APPLICATIONS

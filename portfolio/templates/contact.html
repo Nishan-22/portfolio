@@ -291,10 +291,13 @@
                                 },
                             });
 
-                            const ct = response.headers.get('content-type') || '';
-                            const data = ct.includes('application/json')
-                                ? await response.json()
-                                : {};
+                            const raw = await response.text();
+                            let data = {};
+                            try {
+                                data = raw ? JSON.parse(raw) : {};
+                            } catch {
+                                data = {};
+                            }
 
                             if (response.ok && data.success) {
                                 this.showSuccess = true;
@@ -314,8 +317,12 @@
                                         : 'Please correct the fields below and try again.';
                                 } else if (data.error) {
                                     this.errorDetail = data.error;
-                                } else if (!ct.includes('application/json')) {
-                                    this.errorDetail = 'The server returned an unexpected response. Please refresh and try again.';
+                                } else if (response.status === 403) {
+                                    this.errorDetail = 'Security check failed (often after deploy). Refresh this page and send again.';
+                                } else if (response.status >= 500) {
+                                    this.errorDetail = 'Server error while sending. Try again later or email me directly.';
+                                } else if (raw && !Object.keys(data).length) {
+                                    this.errorDetail = 'The server did not accept the request. Refresh the page and try again.';
                                 } else {
                                     this.errorDetail = 'Something went wrong. Please try again in a moment.';
                                 }
