@@ -120,26 +120,24 @@
     <div x-show="dark" class="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/5 blur-[120px] rounded-full"></div>
     <div x-show="dark" class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/5 blur-[120px] rounded-full"></div>
     
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
-        <p class="text-blue-500 uppercase tracking-[0.3em] text-xs font-bold mb-4 flex items-center gap-3">
-            <span class="w-8 h-[1px] bg-blue-500 inline-block"></span>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-left">
+        <p class="text-blue-500 uppercase tracking-widest text-xs font-bold mb-2">
             Capabilities
-            <span class="w-8 h-[1px] bg-blue-500 inline-block"></span>
-        </p>
-        
-        <h2 class="heading-font text-3xl sm:text-4xl md:text-6xl font-bold uppercase mb-6 leading-tight text-slate-900 dark:text-white">
-            What I Do
-        </h2>
-        
-        <div class="w-20 h-1 bg-blue-600 mb-8"></div>
-        
-        <p class="text-slate-700 dark:text-gray-300 text-lg md:text-xl leading-relaxed md:leading-9 mb-8 font-medium max-w-3xl">
-            {{ profile.bio }}
         </p>
 
-        <div class="mb-8">
-            <p class="text-xs uppercase tracking-[0.25em] text-slate-500 dark:text-gray-400 font-semibold mb-4">Core Skills</p>
-            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <h2 class="heading-font text-3xl md:text-4xl font-bold uppercase mb-8 md:mb-12 leading-tight text-slate-900 dark:text-white">
+            What I Do
+        </h2>
+
+        <div class="max-w-3xl">
+            <p class="text-slate-700 dark:text-gray-300 text-lg md:text-xl leading-relaxed md:leading-9 font-medium">
+                {{ profile.bio }}
+            </p>
+        </div>
+
+        <div class="mt-10 max-w-5xl">
+            <p class="text-xs uppercase tracking-widest text-slate-500 dark:text-gray-400 font-semibold mb-4">Core Skills</p>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {% for skill in skills %}
                 <li class="flex items-center gap-3 bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg px-4 py-3">
                     <span class="w-9 h-9 rounded-lg bg-blue-600/10 text-blue-600 flex items-center justify-center shrink-0">
@@ -153,7 +151,7 @@
             </ul>
         </div>
 
-        <a href="#contact" class="inline-flex items-center gap-3 text-blue-600 hover:text-blue-700 transition font-bold uppercase tracking-widest text-xs group">
+        <a href="#contact" class="mt-10 inline-flex items-center gap-3 text-blue-600 hover:text-blue-700 transition font-bold uppercase tracking-widest text-xs group">
             Let's Work Together
             <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
         </a>
