@@ -12,7 +12,9 @@ class SkillAdmin(admin.ModelAdmin):
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('title', 'category', 'is_featured', 'is_blockchain', 'created_at')
+    list_display_links = ('title',)
     list_filter = ('is_featured', 'is_blockchain', 'category')
+    list_editable = ('is_featured', 'is_blockchain')
 
 @admin.register(Certificate)
 class CertificateAdmin(admin.ModelAdmin):
@@ -22,6 +24,8 @@ class CertificateAdmin(admin.ModelAdmin):
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
     list_display = ('title', 'category', 'is_published', 'published_at', 'created_at')
+    list_display_links = ('title',)
+    list_editable = ('is_published',)
     list_filter = ('is_published', 'category')
     search_fields = ('title', 'content', 'excerpt')
     prepopulated_fields = {'slug': ('title',)}

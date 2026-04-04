@@ -170,7 +170,11 @@
         <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
             {% for project in projects %}
             <div class="bg-white dark:bg-white/5 rounded-lg border border-slate-200 dark:border-white/10 overflow-hidden hover:shadow-xl transition">
-                <img src="{{ project.image.url }}" class="w-full aspect-video object-cover">
+                {% if project.image %}
+                <img src="{{ project.image.url }}" alt="{{ project.title }}" class="w-full aspect-video object-cover">
+                {% else %}
+                <div class="w-full aspect-video bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 text-xs uppercase tracking-widest">No image</div>
+                {% endif %}
                 <div class="p-5">
                     <p class="text-blue-600 text-[10px] uppercase tracking-widest mb-2">{{ project.category }}</p>
                     <h3 class="heading-font uppercase font-bold text-base mb-2">{{ project.title }}</h3>

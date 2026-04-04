@@ -29,9 +29,10 @@ def send_contact_email(form):
 def home(request):
     profile = Profile.objects.first()
     skills = Skill.objects.all()
-    # Exclude blockchain projects from home page
-    featured_projects = Project.objects.filter(is_featured=True, is_blockchain=False)
-    projects = Project.objects.filter(is_featured=False, is_blockchain=False)
+    # All non-blockchain projects on home; featured first, then newest
+    projects = Project.objects.filter(is_blockchain=False).order_by(
+        "-is_featured", "-created_at"
+    )
     certificates = Certificate.objects.all()
     form = ContactForm()
 
@@ -48,8 +49,11 @@ def home(request):
                     return JsonResponse({'success': False}, status=500)
 
     return render(request, "index.html", {
-        "profile": profile, "skills": skills, "featured_projects": featured_projects,
-        "projects": projects, "certificates": certificates, "form": form,
+        "profile": profile,
+        "skills": skills,
+        "projects": projects,
+        "certificates": certificates,
+        "form": form,
     })
 
 def contact(request):
@@ -74,9 +78,11 @@ def contact(request):
 
 def terminal_view(request):
     # Only show blockchain projects in terminal view
-    projects = Project.objects.filter(is_blockchain=True)
-    # Get published blog posts
-    blog_posts = BlogPost.objects.filter(is_published=True)[:6]  # Show latest 6 posts
+    projects = Project.objects.filter(is_blockchain=True).order_by("-created_at")
+    # Published posts only (toggle "Is published" in admin, or set when saving)
+    blog_posts = BlogPost.objects.filter(is_published=True).order_by(
+        "-published_at", "-created_at"
+    )[:6]
 
     return render(request, "terminal.html", {
         "projects": projects, "blog_posts": blog_posts,

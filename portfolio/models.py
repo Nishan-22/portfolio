@@ -1,7 +1,5 @@
 from django.db import models
 
-from django.db import models
-
 class Profile(models.Model):
     name = models.CharField(max_length=100)
     tagline = models.CharField(max_length=200)
@@ -59,7 +57,10 @@ class BlogPost(models.Model):
     excerpt = models.TextField(help_text="Short summary of the post")
     content = models.TextField()
     image = models.ImageField(upload_to="blog/", blank=True)
-    is_published = models.BooleanField(default=False)
+    is_published = models.BooleanField(
+        default=True,
+        help_text="Uncheck to hide this post from the Web3 / blockchain page.",
+    )
     published_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
