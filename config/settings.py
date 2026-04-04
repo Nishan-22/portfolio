@@ -167,14 +167,19 @@ else:
 
 
 # EMAIL CONFIG
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER") or None
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD") or None
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or "noreply@example.com"
+
+# Local dev: print mail to the console when SMTP credentials are missing
+if DEBUG and not (EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 
 # DEFAULT PK

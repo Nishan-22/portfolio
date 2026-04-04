@@ -177,11 +177,23 @@
             Connect with me or send a direct message.
         </p>
 
-        <!-- SUCCESS MESSAGE -->
-        <div x-show="showSuccess" x-transition class="mb-8 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg text-green-700 dark:text-green-400 text-sm slide-down" role="alert">
-            <i class="fa-solid fa-check-circle mr-2"></i>
-            <span>Message sent successfully! I'll get back to you soon.</span>
+        {% if messages %}
+        <div class="mb-8 space-y-3 text-left">
+            {% for message in messages %}
+            {% if message.level_tag == 'success' %}
+            <div class="p-4 rounded-xl border bg-green-50 dark:bg-green-900/25 border-green-200 dark:border-green-700 text-green-800 dark:text-green-200 shadow-sm" role="status">
+                <p class="font-bold text-sm uppercase tracking-wide text-green-700 dark:text-green-300">Message sent successfully</p>
+                <p class="text-sm mt-1">{{ message }}</p>
+            </div>
+            {% else %}
+            <div class="p-4 rounded-xl border bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 shadow-sm" role="alert">
+                <p class="font-bold text-sm uppercase tracking-wide text-red-700 dark:text-red-300">Message failed</p>
+                <p class="text-sm mt-1">{{ message }}</p>
+            </div>
+            {% endif %}
+            {% endfor %}
         </div>
+        {% endif %}
 
         <!-- LOADING OVERLAY -->
         <div x-show="isSubmitting" class="fixed inset-0 bg-black/30 dark:bg-black/50 flex items-center justify-center z-50">
@@ -211,8 +223,30 @@
         </div>
 
         <!-- CONTACT FORM -->
-        <form method="POST" class="space-y-6 text-left" x-data="contactForm()" @submit.prevent="submitForm">
+        <form method="POST" action="{% url 'contact' %}" class="space-y-6 text-left" id="contact-form" x-data="contactForm()" @submit.prevent="submitForm">
             {% csrf_token %}
+
+            <!-- AJAX: success notice -->
+            <div x-cloak x-show="showSuccess" x-transition
+                 class="p-4 rounded-xl border bg-green-50 dark:bg-green-900/25 border-green-200 dark:border-green-700 text-green-800 dark:text-green-200 shadow-sm"
+                 role="status" aria-live="polite">
+                <p class="font-bold text-sm uppercase tracking-wide text-green-700 dark:text-green-300 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                    Message sent successfully
+                </p>
+                <p class="text-sm mt-1">Your message was delivered. I’ll get back to you soon.</p>
+            </div>
+
+            <!-- AJAX: failure notice -->
+            <div x-cloak x-show="showError" x-transition
+                 class="p-4 rounded-xl border bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 shadow-sm"
+                 role="alert" aria-live="assertive">
+                <p class="font-bold text-sm uppercase tracking-wide text-red-700 dark:text-red-300 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+                    Message failed
+                </p>
+                <p class="text-sm mt-1" x-text="errorDetail"></p>
+            </div>
 
             {{ form.name }}
             {{ form.email }}
@@ -233,29 +267,63 @@
                 Alpine.data('contactForm', () => ({
                     isSubmitting: false,
                     showSuccess: false,
+                    showError: false,
+                    errorDetail: '',
                     async submitForm() {
-                        const form = document.querySelector('form');
+                        const form = document.getElementById('contact-form');
+                        if (!form) return;
                         const formData = new FormData(form);
-                        
+                        const csrftoken = form.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
                         this.isSubmitting = true;
-                        
+                        this.showError = false;
+                        this.showSuccess = false;
+                        this.errorDetail = '';
+
                         try {
-                            const response = await fetch(form.action || '', {
+                            const response = await fetch(form.action, {
                                 method: 'POST',
                                 body: formData,
+                                credentials: 'same-origin',
                                 headers: {
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                }
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    ...(csrftoken ? { 'X-CSRFToken': csrftoken } : {}),
+                                },
                             });
-                            const data = await response.json();
-                            
-                            if (data.success) {
+
+                            const ct = response.headers.get('content-type') || '';
+                            const data = ct.includes('application/json')
+                                ? await response.json()
+                                : {};
+
+                            if (response.ok && data.success) {
                                 this.showSuccess = true;
                                 form.reset();
-                                setTimeout(() => this.showSuccess = false, 5000);
+                                setTimeout(() => { this.showSuccess = false; }, 8000);
+                            } else {
+                                this.showError = true;
+                                if (data.errors) {
+                                    const parts = [];
+                                    for (const k of Object.keys(data.errors)) {
+                                        const msgs = data.errors[k];
+                                        if (Array.isArray(msgs)) parts.push(...msgs);
+                                        else parts.push(String(msgs));
+                                    }
+                                    this.errorDetail = parts.length
+                                        ? parts.join(' ')
+                                        : 'Please correct the fields below and try again.';
+                                } else if (data.error) {
+                                    this.errorDetail = data.error;
+                                } else if (!ct.includes('application/json')) {
+                                    this.errorDetail = 'The server returned an unexpected response. Please refresh and try again.';
+                                } else {
+                                    this.errorDetail = 'Something went wrong. Please try again in a moment.';
+                                }
                             }
                         } catch (error) {
                             console.error('Error:', error);
+                            this.showError = true;
+                            this.errorDetail = 'Could not reach the server. Check your connection and try again.';
                         } finally {
                             this.isSubmitting = false;
                         }

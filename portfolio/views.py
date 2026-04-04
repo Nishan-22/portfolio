@@ -1,10 +1,18 @@
 from django.shortcuts import render, redirect  # 1. Added redirect
+from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.http import JsonResponse
 
 from .models import Project, Skill, Profile, Certificate, BlogPost
 from .forms import ContactForm
+
+CONTACT_INBOX = "nishan.official22@gmail.com"
+
+
+def _is_contact_ajax(request):
+    return request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
 
 # ======================================================
 # SHARED EMAIL LOGIC
@@ -15,13 +23,50 @@ def send_contact_email(form):
     message = form.cleaned_data["message"]
     reply_to = [email] if email else []
 
+    if settings.EMAIL_BACKEND.endswith("smtp.EmailBackend"):
+        if not settings.EMAIL_HOST_USER or not settings.EMAIL_HOST_PASSWORD:
+            raise RuntimeError("SMTP is not configured (set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD).")
+
+    from_email = settings.EMAIL_HOST_USER or settings.DEFAULT_FROM_EMAIL
+
     EmailMessage(
         subject=f"New Portfolio Message from {name}",
         body=f"Sender Name: {name}\nSender Email: {email or 'Not provided'}\n\nMessage:\n{message}",
-        from_email=settings.EMAIL_HOST_USER,
-        to=["nishan.official22@gmail.com"],
+        from_email=from_email,
+        to=[CONTACT_INBOX],
         reply_to=reply_to,
     ).send()
+
+
+def _contact_post_response(request, form, redirect_name="contact"):
+    """Return redirect, JsonResponse, or None (caller re-renders with current form)."""
+    is_ajax = _is_contact_ajax(request)
+    if not form.is_valid():
+        if is_ajax:
+            return JsonResponse({"success": False, "errors": form.errors}, status=400)
+        return None
+
+    try:
+        send_contact_email(form)
+    except Exception:
+        if is_ajax:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "error": "Could not send your message. Please try again later or email directly.",
+                },
+                status=500,
+            )
+        messages.error(
+            request,
+            "Could not send your message. Please try again or email directly.",
+        )
+        return None
+
+    if is_ajax:
+        return JsonResponse({"success": True})
+    messages.success(request, "Your message was sent successfully.")
+    return redirect(redirect_name)
 
 # ======================================================
 # VIEWS
@@ -38,15 +83,9 @@ def home(request):
 
     if request.method == "POST":
         form = ContactForm(request.POST)
-        if form.is_valid():
-            try:
-                send_contact_email(form)
-                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return JsonResponse({'success': True})
-                return redirect('home') # 2. Clear resubmission popup
-            except Exception as e:
-                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return JsonResponse({'success': False}, status=500)
+        resp = _contact_post_response(request, form, redirect_name="home")
+        if resp is not None:
+            return resp
 
     return render(request, "index.html", {
         "profile": profile,
@@ -62,15 +101,9 @@ def contact(request):
 
     if request.method == "POST":
         form = ContactForm(request.POST)
-        if form.is_valid():
-            try:
-                send_contact_email(form)
-                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return JsonResponse({'success': True})
-                return redirect('contact')
-            except Exception as e:
-                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return JsonResponse({'success': False}, status=500)
+        resp = _contact_post_response(request, form)
+        if resp is not None:
+            return resp
 
     return render(request, "contact.html", {
         "profile": profile, "form": form,
