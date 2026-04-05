@@ -24,7 +24,13 @@ services:
       - key: ALLOWED_HOSTS
         value: "*"
 
-      # Email config
+      # Email: Render free tier blocks SMTP (587). Use Resend + RESEND_API_KEY (HTTPS).
+      - key: RESEND_API_KEY
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false
+
+      # Optional Gmail SMTP (only works on paid Render or local dev)
       - key: EMAIL_HOST_USER
         sync: false
       - key: EMAIL_HOST_PASSWORD

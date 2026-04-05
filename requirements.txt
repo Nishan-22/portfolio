@@ -7,3 +7,4 @@ python-decouple
 whitenoise[brotli]
 cloudinary
 django-cloudinary-storage
+django-anymail[resend]>=12.0

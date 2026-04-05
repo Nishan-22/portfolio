@@ -69,6 +69,11 @@ if cloudinary is not None:
         'cloudinary_storage',
     ]
 
+# Resend (HTTPS) — use on Render free tier; outbound SMTP ports are blocked there.
+RESEND_API_KEY = (os.getenv('RESEND_API_KEY') or '').strip() or None
+if RESEND_API_KEY:
+    INSTALLED_APPS += ['anymail']
+
 
 # MIDDLEWARE
 MIDDLEWARE = [
@@ -183,17 +188,46 @@ else:
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_TIMEOUT = 15
 
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER") or None
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD") or None
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or "noreply@example.com"
+EMAIL_HOST_USER = (os.getenv("EMAIL_HOST_USER") or "").strip() or None
+# Gmail app passwords are often pasted with spaces; SMTP requires the 16 chars without spaces.
+_raw_mail_pass = os.getenv("EMAIL_HOST_PASSWORD") or ""
+EMAIL_HOST_PASSWORD = _raw_mail_pass.replace(" ", "").replace("\t", "") or None
 
-# Local dev: print mail to the console when SMTP credentials are missing
-if DEBUG and not (EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
+if RESEND_API_KEY:
+    # Works on Render free tier (port 443). Get a key at https://resend.com
+    EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
+    ANYMAIL = {"RESEND_API_KEY": RESEND_API_KEY}
+    # After verifying your domain in Resend, set e.g. DEFAULT_FROM_EMAIL=hello@nishanpaudel.info.np
+    DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="onboarding@resend.dev")
+elif DEBUG and not (EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or "noreply@example.com"
 else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or "noreply@example.com"
+
+CONTACT_INBOX = config("CONTACT_INBOX", default="nishan.official22@gmail.com")
 
 
 # DEFAULT PK
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# So contact-form SMTP errors show in Render / gunicorn logs
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'portfolio': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

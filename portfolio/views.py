@@ -1,13 +1,19 @@
+import logging
+
 from django.shortcuts import render, redirect  # 1. Added redirect
 from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.http import JsonResponse
 
+logger = logging.getLogger(__name__)
+
 from .models import Project, Skill, Profile, Certificate, BlogPost
 from .forms import ContactForm
 
-CONTACT_INBOX = "nishan.official22@gmail.com"
+
+def _contact_inbox():
+    return getattr(settings, "CONTACT_INBOX", "nishan.official22@gmail.com")
 
 
 def _is_contact_ajax(request):
@@ -26,14 +32,16 @@ def send_contact_email(form):
     if settings.EMAIL_BACKEND.endswith("smtp.EmailBackend"):
         if not settings.EMAIL_HOST_USER or not settings.EMAIL_HOST_PASSWORD:
             raise RuntimeError("SMTP is not configured (set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD).")
-
-    from_email = settings.EMAIL_HOST_USER or settings.DEFAULT_FROM_EMAIL
+        from_email = settings.EMAIL_HOST_USER
+    else:
+        # Resend, console, etc.
+        from_email = settings.DEFAULT_FROM_EMAIL
 
     EmailMessage(
         subject=f"New Portfolio Message from {name}",
         body=f"Sender Name: {name}\nSender Email: {email or 'Not provided'}\n\nMessage:\n{message}",
         from_email=from_email,
-        to=[CONTACT_INBOX],
+        to=[_contact_inbox()],
         reply_to=reply_to,
     ).send()
 
@@ -49,6 +57,7 @@ def _contact_post_response(request, form, redirect_name="contact"):
     try:
         send_contact_email(form)
     except Exception:
+        logger.exception("Contact form: failed to send email")
         if is_ajax:
             return JsonResponse(
                 {
