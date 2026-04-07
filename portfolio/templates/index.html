@@ -74,28 +74,6 @@
         .section-panel:hover::before {
             opacity: 1;
         }
-        .skill-card {
-            background: #ffffff;
-            border: 1px solid rgba(148, 163, 184, 0.35);
-            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
-        }
-        .dark .skill-card {
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(59, 130, 246, 0.28);
-            box-shadow: 0 10px 26px rgba(2, 6, 23, 0.45);
-        }
-        .skill-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(37, 99, 235, 0.55);
-        }
-        .skill-icon-wrap {
-            background: rgba(37, 99, 235, 0.12);
-            color: #2563eb;
-        }
-        .dark .skill-icon-wrap {
-            background: rgba(37, 99, 235, 0.22);
-            color: #60a5fa;
-        }
     </style>
 </head>
 
@@ -204,14 +182,13 @@
             <p class="text-xs uppercase tracking-widest text-slate-500 dark:text-gray-300 font-semibold mb-4">Core Skills</p>
             <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {% for skill in skills %}
-                <li class="skill-card flex items-center gap-3 rounded-lg px-4 py-3 transition">
-                    <span class="skill-icon-wrap w-9 h-9 rounded-lg flex items-center justify-center shrink-0">
+                <li class="flex items-center gap-3 glass-card rounded-lg px-4 py-3 hover:-translate-y-0.5 transition">
+                    <span class="w-9 h-9 rounded-lg bg-blue-600/10 text-blue-600 flex items-center justify-center shrink-0">
                         <i class="fa-brands fa-{{ skill.icon_name }}"></i>
                     </span>
-                    <div>
-                        <p class="text-sm md:text-base font-semibold text-slate-900 dark:text-white leading-tight">{{ skill.name }}</p>
-                        <p class="text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-300 mt-1">Practical experience</p>
-                    </div>
+                    <span class="text-sm md:text-base font-semibold text-slate-800 dark:text-gray-200">
+                        {{ skill.name }}
+                    </span>
                 </li>
                 {% endfor %}
             </ul>
